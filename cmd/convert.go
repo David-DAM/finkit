@@ -28,9 +28,14 @@ finkit currency convert 1000 USD CHF
 
 		app := cmd.Context().Value("FinKit").(*bootstrap.App)
 
-		currencies, err := app.Convert.SupportedCurrencies()
+		currencies, err := app.Currency.Currencies()
 		if err != nil {
 			return nil, cobra.ShellCompDirectiveNoFileComp
+		}
+
+		var supportedCurrencies []string
+		for _, c := range currencies {
+			supportedCurrencies = append(supportedCurrencies, c.IsoCode)
 		}
 
 		switch len(args) {
@@ -39,7 +44,7 @@ finkit currency convert 1000 USD CHF
 			return nil, cobra.ShellCompDirectiveDefault
 
 		case 1:
-			return currencies, cobra.ShellCompDirectiveNoFileComp
+			return supportedCurrencies, cobra.ShellCompDirectiveNoFileComp
 
 		case 2:
 			from := args[1]
@@ -47,8 +52,8 @@ finkit currency convert 1000 USD CHF
 			var result []string
 
 			for _, currency := range currencies {
-				if currency != from {
-					result = append(result, currency)
+				if currency.IsoCode != from {
+					result = append(result, currency.IsoCode)
 				}
 			}
 
@@ -60,7 +65,7 @@ finkit currency convert 1000 USD CHF
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		app := cmd.Context().Value("FinKit").(*bootstrap.App)
+		app := cmd.Context().Value("app").(*bootstrap.App)
 
 		amount, err := strconv.ParseFloat(args[0], 64)
 		if err != nil {
@@ -71,11 +76,11 @@ finkit currency convert 1000 USD CHF
 
 		to := args[2]
 
-		result, err := app.Convert.Convert(amount, from, to)
+		result, err := app.Currency.Convert(from, to)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("%.2f %s = %.2f %s\n", amount, from, result, to)
+		fmt.Printf("%.2f %s = %.2f %s\nLast update: %s", amount, from, amount*result.Rate, to, result.Date)
 		return nil
 	},
 }

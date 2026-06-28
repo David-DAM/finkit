@@ -1,4 +1,4 @@
-package convert
+package currency
 
 import (
 	"finkit/internal/cache"
@@ -22,13 +22,13 @@ const (
 	ttlRates      = 15 * time.Minute
 )
 
-func (s *Service) Convert(amount float64, from string, to string) (float64, error) {
-	var rate float64
+func (s *Service) Convert(from string, to string) (*Rate, error) {
+	var rate *Rate
 
 	err := s.cache.Get(fmt.Sprintf("rate-%s-%s", from, to), &rate)
 	if err == nil {
 		s.logger.Info("rate found in cache", "from", from, "to", to, "rate", rate)
-		return amount * rate, nil
+		return rate, nil
 	}
 
 	s.logger.Error("rate not found in cache", "from", from, "to", to, "err", err)
@@ -36,7 +36,7 @@ func (s *Service) Convert(amount float64, from string, to string) (float64, erro
 	rate, err = s.provider.GetRate(from, to)
 	if err != nil {
 		s.logger.Error("error getting rate", "from", from, "to", to, "err", err)
-		return 0, err
+		return nil, err
 	}
 
 	err = s.cache.Set(fmt.Sprintf("rate-%s-%s", from, to), rate, ttlRates)
@@ -44,18 +44,25 @@ func (s *Service) Convert(amount float64, from string, to string) (float64, erro
 		s.logger.Error("error setting rate in cache", "from", from, "to", to, "err", err)
 	}
 
-	return amount * rate, nil
+	return rate, nil
 }
 
-func (s *Service) SupportedCurrencies() ([]string, error) {
-	var currencies []string
+func (s *Service) Currencies() ([]Currency, error) {
+	var currencies []Currency
 
 	err := s.cache.Get("currencies", &currencies)
-	if err != nil {
-		s.logger.Error("error getting currencies from cache", "err", err)
+	if err == nil {
+		s.logger.Info("currencies found in cache")
+		return currencies, err
 	}
 
+	s.logger.Error("error getting currencies from cache", "err", err)
+
 	currencies, err = s.provider.SupportedCurrencies()
+	if err != nil {
+		s.logger.Error("error getting supported currencies", "err", err)
+		return nil, err
+	}
 
 	err = s.cache.Set("currencies", currencies, ttlCurrencies)
 	if err != nil {

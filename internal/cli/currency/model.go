@@ -8,10 +8,6 @@ type Currency struct {
 	StartDate  string `json:"start_date"`
 }
 
-type Currencies struct {
-	Currencies []Currency
-}
-
 type Rate struct {
 	Date  string  `json:"date"`
 	Base  string  `json:"base"`

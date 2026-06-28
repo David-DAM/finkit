@@ -2,24 +2,24 @@ package bootstrap
 
 import (
 	"finkit/internal/cache"
-	"finkit/internal/cli/currency/convert"
+	"finkit/internal/cli/currency"
 	"finkit/internal/logger"
 	"log/slog"
 )
 
 type App struct {
-	Convert *convert.Service
-	Logger  *slog.Logger
+	Currency *currency.Service
+	Logger   *slog.Logger
 }
 
 func BuildApp(verbose bool) *App {
 
 	log := logger.InitLogger(verbose)
-	provider := convert.NewFrankfurterProvider()
+	provider := currency.NewFrankfurterProvider(log)
 	fileCache := cache.NewFileCache()
 
 	return &App{
-		Convert: convert.NewService(provider, fileCache, log),
-		Logger:  log,
+		Currency: currency.NewService(provider, fileCache, log),
+		Logger:   log,
 	}
 }
