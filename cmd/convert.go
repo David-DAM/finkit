@@ -26,7 +26,7 @@ finkit currency convert 1000 USD CHF
 		toComplete string,
 	) ([]string, cobra.ShellCompDirective) {
 
-		app := cmd.Context().Value("FinKit").(*bootstrap.App)
+		app := cmd.Context().Value("app").(*bootstrap.App)
 
 		currencies, err := app.Currency.Currencies()
 		if err != nil {

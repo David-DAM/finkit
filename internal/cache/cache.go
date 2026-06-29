@@ -19,10 +19,10 @@ type FileCache struct {
 	log *slog.Logger
 }
 
-func NewFileCache() *FileCache {
+func NewFileCache(log *slog.Logger) *FileCache {
 	cacheDir := filepath.Join(os.TempDir(), "finkit-cache")
 	_ = os.MkdirAll(cacheDir, 0755)
-	return &FileCache{dir: cacheDir}
+	return &FileCache{dir: cacheDir, log: log}
 }
 
 func (c *FileCache) Get(key string, v any) error {
@@ -31,15 +31,14 @@ func (c *FileCache) Get(key string, v any) error {
 
 	b, err := os.ReadFile(path)
 	if err != nil {
+		c.log.Error("error reading cache file", "err", err)
 		return err
 	}
 
-	var wrapper struct {
-		Value     json.RawMessage `json:"value"`
-		ExpiresAt time.Time       `json:"expires_at"`
-	}
+	var wrapper WrapperGet
 
 	if err := json.Unmarshal(b, &wrapper); err != nil {
+		c.log.Error("error unmarshalling cache file", "err", err)
 		return err
 	}
 
@@ -54,16 +53,14 @@ func (c *FileCache) Set(key string, v any, ttl time.Duration) error {
 
 	path := filepath.Join(c.dir, key+".json")
 
-	data := struct {
-		Value     any       `json:"value"`
-		ExpiresAt time.Time `json:"expires_at"`
-	}{
+	data := WrapperSet{
 		Value:     v,
 		ExpiresAt: time.Now().Add(ttl),
 	}
 
 	b, err := json.Marshal(data)
 	if err != nil {
+		c.log.Error("error marshalling cache data", "err", err)
 		return err
 	}
 

@@ -31,7 +31,7 @@ func (s *Service) Convert(from string, to string) (*Rate, error) {
 		return rate, nil
 	}
 
-	s.logger.Error("rate not found in cache", "from", from, "to", to, "err", err)
+	s.logger.Warn("rate not found in cache", "from", from, "to", to, "err", err)
 
 	rate, err = s.provider.GetRate(from, to)
 	if err != nil {
@@ -56,7 +56,7 @@ func (s *Service) Currencies() ([]Currency, error) {
 		return currencies, err
 	}
 
-	s.logger.Error("error getting currencies from cache", "err", err)
+	s.logger.Warn("error getting currencies from cache", "err", err)
 
 	currencies, err = s.provider.SupportedCurrencies()
 	if err != nil {
