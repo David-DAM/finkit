@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"finkit/internal/cache"
 	"finkit/internal/cli/currency"
+	"finkit/internal/cli/interest"
 	"finkit/internal/cli/tax"
 	"finkit/internal/logger"
 	"log/slog"
@@ -11,6 +12,7 @@ import (
 type App struct {
 	Currency *currency.Service
 	Tax      *tax.Service
+	Compound *interest.Service
 	Logger   *slog.Logger
 }
 
@@ -23,6 +25,7 @@ func BuildApp(verbose bool) *App {
 	return &App{
 		Currency: currency.NewService(provider, fileCache, log),
 		Tax:      tax.NewService(log),
+		Compound: interest.NewService(log),
 		Logger:   log,
 	}
 }
