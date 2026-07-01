@@ -12,7 +12,7 @@ func NewService(logger *slog.Logger) *Service {
 
 const unlimitedBracketLimit = 0
 
-func (s *Service) CalculateTaxSalary(salary float64, country string) float64 {
+func (s *Service) Do(salary float64, country string) float64 {
 	if len(country) == 0 {
 		s.logger.Error("country must be provided")
 		return 0

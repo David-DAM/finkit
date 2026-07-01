@@ -11,8 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// cobra-cli add list -p currencyCmd
-// cobra-cli add currency
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "finkit",
@@ -38,5 +36,5 @@ var verbose bool
 
 func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", true, "enable verbose logs")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "enable verbose logs")
 }

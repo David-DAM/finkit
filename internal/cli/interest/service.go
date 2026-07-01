@@ -13,7 +13,7 @@ func NewService(logger *slog.Logger) *Service {
 	return &Service{logger: logger}
 }
 
-func (s *Service) CalculateInterestCompound(initialInvestment float64, monthlyContribution float64, years int, rate float64) float64 {
+func (s *Service) Do(initialInvestment float64, monthlyContribution float64, years int, rate float64) float64 {
 
 	months := years * 12
 	monthlyRate := rate / 100 / 12

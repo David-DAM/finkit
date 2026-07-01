@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"finkit/internal/bootstrap"
-	"finkit/internal/version"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -23,14 +22,12 @@ it displays the version information and download URL.`,
 	Example: `finkit update`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		app := cmd.Context().Value("app").(*bootstrap.App)
-		check, err := app.Update.Check(cmd.Context())
+		message, err := app.Update.Do(cmd.Context())
 		if err != nil {
 			return err
 		}
-		fmt.Println("A new version is available!")
-		fmt.Printf("Current: %s\n", version.Version)
-		fmt.Printf("Latest: %s\n", check.TagName)
-		fmt.Println(check.HtmlUrl)
+
+		fmt.Println(message)
 		return nil
 	},
 }

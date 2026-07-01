@@ -37,7 +37,7 @@ finkit tax salary 120000 ES`,
 
 		country := args[1]
 
-		taxAmount := app.Tax.CalculateTaxSalary(salary, country)
+		taxAmount := app.Tax.Do(salary, country)
 
 		fmt.Printf("Gross salary: %.2f\n", salary)
 		fmt.Printf("Estimated taxes: %.2f\n", taxAmount)

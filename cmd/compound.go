@@ -35,7 +35,7 @@ finkit interest compound --initial 50000 --monthly 1000 --years 20 --rate 8`,
 
 		app := cmd.Context().Value("app").(*bootstrap.App)
 
-		interest := app.Compound.CalculateInterestCompound(initialInvestment, monthlyContribution, years, rate)
+		interest := app.Compound.Do(initialInvestment, monthlyContribution, years, rate)
 		profit := interest - (initialInvestment + monthlyContribution*float64(years*12))
 
 		totalInvested := initialInvestment + monthlyContribution*float64(years*12)

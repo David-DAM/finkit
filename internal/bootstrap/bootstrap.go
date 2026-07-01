@@ -25,7 +25,7 @@ type App struct {
 func BuildApp(verbose bool) *App {
 
 	client := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 10 * time.Second,
 	}
 	log := logger.InitLogger(verbose)
 	fileCache := cache.NewFileCache(log)
@@ -36,7 +36,7 @@ func BuildApp(verbose bool) *App {
 		Currency: currency.NewService(currencyProvider, fileCache, log),
 		Tax:      tax.NewService(log),
 		Compound: interest.NewService(log),
-		Update:   update.NewService(githubProvider, log),
+		Update:   update.NewService(githubProvider, log, client),
 		Logger:   log,
 		Config:   config.NewConfig(),
 	}
