@@ -16,17 +16,18 @@ var rootCmd = &cobra.Command{
 	Use:   "finkit",
 	Short: "FinKit is a powerful and lightweight Command Line Interface (CLI) tool built in Go for financial operations",
 	Long:  "FinKit is a powerful and lightweight Command Line Interface (CLI) tool built in Go for financial operations",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		app := bootstrap.BuildApp(verbose)
+
+		ctx := context.WithValue(cmd.Context(), "app", app)
+		cmd.SetContext(ctx)
+
+		return nil
+	},
 }
 
 func Execute() {
-	app := bootstrap.BuildApp(verbose)
-
-	ctx := context.WithValue(
-		context.Background(),
-		"app",
-		app,
-	)
-	err := rootCmd.ExecuteContext(ctx)
+	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
