@@ -6,7 +6,7 @@ builds:
   - binary: finkit
     ldflags:
       - -s -w
-      - -X finkit/internal/version.Version={{ .Version }}
+      - -X finkit/internal/version.Version={{ .Tag }}
       - -X finkit/internal/version.Commit={{ .Commit }}
       - -X finkit/internal/version.Date={{ .Date }}
 

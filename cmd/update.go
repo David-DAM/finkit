@@ -30,7 +30,7 @@ it displays the version information and download URL.`,
 		fmt.Println("A new version is available!")
 		fmt.Printf("Current: %s\n", version.Version)
 		fmt.Printf("Latest: %s\n", check.TagName)
-		fmt.Println(check.URL)
+		fmt.Println(check.HtmlUrl)
 		return nil
 	},
 }

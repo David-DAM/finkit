@@ -2,5 +2,5 @@ package update
 
 type Release struct {
 	TagName string `json:"tag_name"`
-	URL     string `json:"url"`
+	HtmlUrl string `json:"html_url"`
 }

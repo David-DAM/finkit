@@ -67,7 +67,5 @@ func (p *GithubProvider) GetLatestRelease(ctx context.Context) (*Release, error)
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	release.URL = url
-
 	return &release, nil
 }
