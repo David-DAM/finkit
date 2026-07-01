@@ -28,7 +28,7 @@ finkit currency convert 1000 USD CHF
 
 		app := cmd.Context().Value("app").(*bootstrap.App)
 
-		currencies, err := app.Currency.Currencies()
+		currencies, err := app.Currency.Currencies(cmd.Context())
 		if err != nil {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
@@ -76,7 +76,7 @@ finkit currency convert 1000 USD CHF
 
 		to := args[2]
 
-		result, err := app.Currency.Convert(from, to)
+		result, err := app.Currency.Convert(cmd.Context(), from, to)
 		if err != nil {
 			return err
 		}

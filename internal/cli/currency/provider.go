@@ -1,6 +1,7 @@
 package currency
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log/slog"
@@ -9,27 +10,45 @@ import (
 
 type Provider interface {
 	GetRate(
+		ctx context.Context,
 		from string,
 		to string,
 	) (*Rate, error)
-	SupportedCurrencies() ([]Currency, error)
+	SupportedCurrencies(
+		ctx context.Context,
+	) ([]Currency, error)
 }
 
 type FrankfurterProvider struct {
 	baseUrl string
+	client  *http.Client
 	logger  *slog.Logger
 }
 
-func NewFrankfurterProvider(logger *slog.Logger) *FrankfurterProvider {
+const ApiUrl = "https://api.frankfurter.dev/v2"
+
+func NewFrankfurterProvider(client *http.Client, logger *slog.Logger) *FrankfurterProvider {
 	return &FrankfurterProvider{
-		baseUrl: "https://api.frankfurter.dev/v2",
+		baseUrl: ApiUrl,
+		client:  client,
 		logger:  logger,
 	}
 }
 
-func (p *FrankfurterProvider) GetRate(from string, to string) (*Rate, error) {
+func (p *FrankfurterProvider) GetRate(ctx context.Context, from string, to string) (*Rate, error) {
 
-	response, err := http.Get(p.baseUrl + "/rate/" + from + "/" + to)
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		p.baseUrl+"/rate/"+from+"/"+to,
+		nil,
+	)
+	if err != nil {
+		p.logger.Error("error creating request", "err", err)
+		return nil, err
+	}
+
+	response, err := p.client.Do(req)
 	if err != nil {
 		p.logger.Error("error getting rate", "from", from, "to", to, "err", err)
 		return nil, err
@@ -58,8 +77,20 @@ func (p *FrankfurterProvider) GetRate(from string, to string) (*Rate, error) {
 	return &rate, nil
 }
 
-func (p *FrankfurterProvider) SupportedCurrencies() ([]Currency, error) {
-	response, err := http.Get(p.baseUrl + "/currencies")
+func (p *FrankfurterProvider) SupportedCurrencies(ctx context.Context) ([]Currency, error) {
+
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		p.baseUrl+"/currencies",
+		nil,
+	)
+	if err != nil {
+		p.logger.Error("error creating request", "err", err)
+		return nil, err
+	}
+
+	response, err := p.client.Do(req)
 	if err != nil {
 		p.logger.Error("error getting supported currencies", "err", err)
 		return nil, err

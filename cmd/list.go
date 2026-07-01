@@ -23,7 +23,7 @@ to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		app := cmd.Context().Value("app").(*bootstrap.App)
 
-		currencies, err := app.Currency.Currencies()
+		currencies, err := app.Currency.Currencies(cmd.Context())
 		if err != nil {
 			return err
 		}
