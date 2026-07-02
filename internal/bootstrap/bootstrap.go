@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"finkit/internal/cache"
 	"finkit/internal/cli/currency"
+	"finkit/internal/cli/inflation"
 	"finkit/internal/cli/interest"
 	"finkit/internal/cli/tax"
 	"finkit/internal/cli/update"
@@ -14,12 +15,13 @@ import (
 )
 
 type App struct {
-	Currency *currency.Service
-	Tax      *tax.Service
-	Compound *interest.Service
-	Update   *update.Service
-	Logger   *slog.Logger
-	Config   *config.Config
+	Currency  *currency.Service
+	Tax       *tax.Service
+	Compound  *interest.Service
+	Update    *update.Service
+	Inflation *inflation.Service
+	Logger    *slog.Logger
+	Config    *config.Config
 }
 
 func BuildApp(verbose bool) *App {
@@ -33,11 +35,12 @@ func BuildApp(verbose bool) *App {
 	githubProvider := update.NewGithubProvider(client, log)
 
 	return &App{
-		Currency: currency.NewService(currencyProvider, fileCache, log),
-		Tax:      tax.NewService(log),
-		Compound: interest.NewService(log),
-		Update:   update.NewService(githubProvider, log, client),
-		Logger:   log,
-		Config:   config.NewConfig(),
+		Currency:  currency.NewService(currencyProvider, fileCache, log),
+		Tax:       tax.NewService(log),
+		Compound:  interest.NewService(log),
+		Update:    update.NewService(githubProvider, log, client),
+		Inflation: inflation.NewService(log),
+		Logger:    log,
+		Config:    config.NewConfig(),
 	}
 }

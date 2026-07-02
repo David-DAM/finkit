@@ -31,7 +31,7 @@ optional monthly contributions.`,
 finkit interest compound --initial 10000 --monthly 500 --years 10 --rate 5
 finkit interest compound --initial 5000 --monthly 200 --years 5 --rate 7.5
 finkit interest compound --initial 50000 --monthly 1000 --years 20 --rate 8`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 
 		app := cmd.Context().Value("app").(*bootstrap.App)
 
@@ -50,6 +50,7 @@ finkit interest compound --initial 50000 --monthly 1000 --years 20 --rate 8`,
 		fmt.Printf("%-25s %15.2f\n", "Total invested:", totalInvested)
 		fmt.Printf("%-25s %15.2f\n", "Interest earned:", profit)
 		fmt.Printf("%-25s %15.2f\n", "Final value:", interest)
+		return nil
 	},
 }
 
